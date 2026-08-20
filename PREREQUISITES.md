@@ -2,6 +2,33 @@
 
 What you need installed before working with this repo, split by role.
 
+## Getting the code onto your machine
+
+Two ways, and only one of them needs an extra tool:
+
+- **Git (recommended if you have it, or don't mind installing it):** lets
+  you pull updates later with one command.
+  ```
+  git clone https://github.com/sriram-rs/IEEE-BLP-AIoT-Stack.git
+  cd IEEE-BLP-AIoT-Stack
+  git checkout feature/onboarding-scripts   # until this merges to main
+  ```
+  Get Git from [git-scm.com](https://git-scm.com/downloads) if it's not
+  already installed (macOS/Linux often have it out of the box; Windows
+  needs a separate install, or comes with "Git Bash").
+
+- **No git needed - just download the ZIP:** on GitHub, switch the branch
+  dropdown to `feature/onboarding-scripts` (until it merges to `main`),
+  then Code -> Download ZIP, and extract it. One quirk: a ZIP download
+  loses `setup.sh`'s "you're allowed to run this" permission flag, so on
+  macOS/Linux run it as `bash setup.sh` rather than `./setup.sh` (running
+  it via `python3 start_installation.py` already does this for you
+  automatically). Windows batch files don't have this issue.
+
+Either way, nothing beyond Python (below) is required to actually run the
+setup - git is a convenience for getting/updating the code, not something
+`start_installation.py` itself needs.
+
 ## Students (workshop laptop)
 
 Just Python 3.10 or newer. Everything else is handled automatically:
