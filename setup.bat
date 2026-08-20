@@ -29,6 +29,9 @@ rem inside the if (...) blocks - Windows batch counts parentheses in the raw
 rem script text to find where a block ends, and gets confused by the
 rem parentheses that are just a normal part of this Python code (e.g. the
 rem parentheses in "sys.exit(...)"), even though they're inside quotes.
+rem Same reason: never write a literal, unquoted "(" or ")" as plain text
+rem (e.g. in an echo message) inside an if (...) block - reword the message
+rem instead, or the block-parsing breaks the same way.
 set "PYCMD="
 set "PY_CHECK_IS3=import sys; sys.exit(0 if sys.version_info[0]==3 else 1)"
 
@@ -73,7 +76,7 @@ set "VENV_PY=%VENV_DIR%\Scripts\python.exe"
 
 if "%RECREATE%"=="1" (
     if exist "%VENV_DIR%" (
-        echo Removing existing .venv-gateway (--recreate was passed)...
+        echo Removing existing .venv-gateway, since --recreate was passed...
         rmdir /s /q "%VENV_DIR%"
     )
 )
@@ -117,12 +120,12 @@ if not !errorlevel!==0 (
 )
 
 if "%WITH_ANTHROPIC%"=="1" (
-    echo Installing the anthropic package (--with-anthropic)...
+    echo Installing the anthropic package, since --with-anthropic was passed...
     "%VENV_PY%" -m pip install "anthropic>=0.40"
 )
 
 if "%WITH_PPTX%"=="1" (
-    echo Installing python-pptx (--with-pptx)...
+    echo Installing python-pptx, since --with-pptx was passed...
     "%VENV_PY%" -m pip install "python-pptx>=0.6"
 )
 
