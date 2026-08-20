@@ -4,9 +4,9 @@ Branch: `feature/onboarding-scripts`
 
 This records the checks run against the new student setup tooling
 (`start_installation.py`, `setup.sh`, `setup.bat`, `gateway.sh`,
-`gateway.bat`) before asking for review. All checks below were run on this
-Linux machine; the Windows-specific checks still need a real Windows
-machine, since none is available here.
+`gateway.bat`) before asking for review. The macOS/Linux checks were run
+directly in this sandbox; the Windows checks were run afterward on a real
+Windows machine, since none was available here.
 
 ## Bug found and fixed along the way
 
@@ -44,17 +44,82 @@ fell back to printing the exact manual command, without failing the rest
 of setup. On a student's own machine, typing a `sudo` password when
 prompted would let this step complete automatically instead.
 
-## Not yet tested (needs a real Windows machine)
+## Bugs found and fixed testing on Windows
 
-- `setup.bat`, `gateway.bat`, and `start_installation.py` on Windows itself
-  (Command Prompt and PowerShell)
+The first real-Windows run failed immediately, right after the banner
+line, with the generic batch error `... was unexpected at this time.` and
+nothing else - no line number, no further detail. This took two rounds to
+fully track down, because Windows batch has a specific, well-known trap
+that this script fell into twice, in two different disguises.
+
+**What was actually wrong:** Windows batch decides where an `if (...)`
+block ends by literally counting `(` and `)` characters in the script's own
+text. It does this whether or not those characters were "meant" as plain
+text - a parenthesis inside a quoted string, or even inside a plain `echo`
+message, still counts. `setup.bat` had two kinds of these:
+
+1. Python code being run via `python -c "..."` that legitimately needed
+   parentheses (e.g. `sys.exit(0 if ... else 1)`), written inline inside an
+   `if (...)` block - fixed by moving that code into a variable set
+   *outside* the block, and referencing the variable inside the block
+   instead, so the block's own literal text has no stray parentheses left
+   for batch to miscount.
+2. Plain English echo messages that happened to use parentheses for a
+   parenthetical aside (e.g. `echo Removing existing .venv-gateway
+   (--recreate was passed)...`), also sitting inside an `if (...)` block -
+   fixed by rewording those messages to not use parentheses at all.
+
+The first fix (commit `2f25bb6`) caught every instance of the first kind.
+The second Windows test run still failed at the same point, which is what
+led to a full, deliberate audit of every single `(` character in the file
+(rather than guessing again) - that's what turned up the second kind,
+fixed in commit `c778e32`. Everything after that audit is confirmed either
+a legitimate block delimiter, a standalone line outside any block (safe),
+or hidden inside a variable (safe) - there shouldn't be a third instance of
+this bug left.
+
+This class of bug is specific to Windows batch's parser and has no
+equivalent on macOS/Linux - `setup.sh` (bash) was never affected, since
+bash actually understands quoting properly.
+
+## What was tested on the real Windows machine (after both fixes)
+
+| # | Check | Result |
+|---|---|---|
+| 1 | `python .\start_installation.py` from a fresh clone, in PowerShell, from a folder path that itself contains a space (`D:\E Drive\Projects-2026\IEEE-BLP-AIoT-Stack`) | Passed - environment created, dependencies installed, self-test passed, ended with "Setup complete!" |
+| 2 | `.\gateway.bat simulate` afterward, no manual activation step | Passed - dashboard started, all 14 simulated sensors came online, frames received/stored counts printed, stopped cleanly with Ctrl+C |
+
+Notable, expected details from this run, not bugs:
+- The machine had Python 3.14 installed (well above the 3.10 minimum), and
+  pip automatically pulled in several Windows-only packages that macOS/Linux
+  never see - `pywin32`, `colorama`, and a set of `winrt-*` packages (the
+  Windows Bluetooth stack bindings `bleak` needs on Windows). This is
+  `pip`/`requirements.txt` working exactly as intended: the same
+  `requirements.txt` file installs the right thing per platform with no
+  changes needed.
+- The folder path containing a space ("E Drive") caused no problems -
+  confirms the quoting throughout `setup.bat` and `start_installation.py`
+  is correct.
+- Stopping `gateway.bat simulate` with Ctrl+C brought up Windows' own
+  standard `Terminate batch job (Y/N)?` prompt before it actually stopped.
+  This is normal `cmd.exe` behavior for any batch file wrapping a running
+  program, not something these scripts can or need to suppress - worth
+  mentioning to students once so it doesn't surprise them, but not a bug.
+
+## Not yet tested
+
+- `setup.bat` run standalone, skipping `start_installation.py` (already
+  confirmed working this way on macOS/Linux)
+- `--recreate`, `--with-anthropic`, and `--with-pptx` specifically exercised
+  on Windows (same code path as macOS/Linux, and now proven to parse
+  correctly, but not individually run through on a Windows machine yet)
 - Behaviour when only the non-functional Microsoft Store Python placeholder
-  is present
-- `--recreate` / `--with-anthropic` on Windows
-- The exact wording of the printed next-step commands on Windows
+  is present, instead of a real install
 
 ## Full raw output
 
-The complete terminal output for checks 1-6 above (including all the pip
-install logs) was saved during testing to a temporary scratch file, not
-committed to the repo. Ask for it to be re-run if a fresh copy is needed.
+The complete terminal output for the macOS/Linux checks (including all the
+pip install logs) was saved during testing to a temporary scratch file, not
+committed to the repo. The Windows run's full output is in the
+conversation this file was generated from. Ask for either to be re-run if a
+fresh copy is needed.
