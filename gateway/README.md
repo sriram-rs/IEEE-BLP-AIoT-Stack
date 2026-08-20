@@ -7,7 +7,24 @@ cloud-loop agent orchestration.
 
 ## Quick start (no hardware needed)
 
-From the `ai_first_course/` directory:
+Recommended: from the `ai_first_course/` directory, run the one-command setup
+(creates the environment, installs dependencies, runs the self-test):
+
+```
+python3 start_installation.py     # macOS/Linux
+python start_installation.py      # Windows
+```
+
+Afterwards, run any gateway command through `gateway.sh` / `gateway.bat` -
+no manual environment activation needed:
+
+```
+bash gateway.sh simulate    # macOS/Linux - 14 simulated SIMs + dashboard on :8080
+gateway.bat simulate        # Windows
+```
+
+Manual setup (also useful for porting to other hardware, see below): from
+the `ai_first_course/` directory:
 
 ```
 python -m gateway smoke        # end-to-end self-test

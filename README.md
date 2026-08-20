@@ -2,6 +2,17 @@
 
 Generated 5 August 2026. Supersedes the sensor-chapter structure of the Rev5 manual; the Rev5 hardware facts (packaging story, compatibility matrix, datasheet-reading habit) carry forward inside the new decks.
 
+## Getting started (students)
+
+Get your laptop ready for the workshop with one command, no manual setup steps:
+
+```
+python3 start_installation.py     # macOS/Linux
+python start_installation.py      # Windows
+```
+
+This sets up everything the gateway needs and runs its self-test. See `gateway/README.md` for what to do next.
+
 ## Contents
 
 | File | Purpose |
@@ -27,6 +38,9 @@ Generated 5 August 2026. Supersedes the sensor-chapter structure of the Rev5 man
 | `18_WORKSHOP_SCHEDULE.md` | 3-day session-by-session schedule with timings (Phase A Days 1-2, Phase B Day 3), 6-week mapping, instructor prep checklist |
 | `CONVERSATION_LOG_2026-08-05.md` | The design conversation with the course owner, prompts verbatim |
 | `gateway/` | Gateway codebase: BLE scan, card-driven decode, SQLite store, MCP server, rule engine, agents, dashboard |
+| `start_installation.py` | One-command student setup: detects your OS and runs `setup.sh` or `setup.bat` |
+| `setup.sh` / `setup.bat` | Full gateway setup (environment, dependencies, self-test) for macOS/Linux and Windows |
+| `gateway.sh` / `gateway.bat` | Run any gateway command after setup, e.g. `bash gateway.sh simulate`, with no manual environment activation |
 | `firmware/rehearsal_advertiser/` | Single-sketch ESP32 known-good radio reference |
 | `firmware/sim-firmware/` | Production SIM firmware: PlatformIO, 5 variants, modular sensors, pins in one header |
 
