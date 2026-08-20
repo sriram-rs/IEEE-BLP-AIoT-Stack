@@ -1,0 +1,31 @@
+{
+  "card_version": "1.0",
+  "sensor_type_id": 4,
+  "schema_version": 1,
+  "part": "4-20 mA transmitter (worked example: cup anemometer 0-30 m/s)",
+  "packaged_part": "PSENS-005",
+  "sim": "SIM4",
+  "interface": "4-20 mA current loop into burden resistor, 12 V loop supply from SIM boost converter",
+  "measurands": [
+    {"name": "loop_ma", "unit": "mA", "range": [0, 24], "accuracy": "burden + ADC chain, ~1% of span", "payload_field": {"offset": 0, "size": 2, "encoding": "uint16", "scale": 0.01}},
+    {"name": "wind_ms", "unit": "m/s", "range": [0, 30], "accuracy": "approximately ±0.5 m/s [PLACEHOLDER: confirm per datasheet]", "payload_field": {"offset": 2, "size": 2, "encoding": "int16", "scale": 0.01}}
+  ],
+  "sampling_period_s": 5,
+  "plausibility": {
+    "loop_ma": {"min": 3.8, "max": 20.5, "max_step_per_min": 16},
+    "wind_ms": {"min": 0, "max": 30, "max_step_per_min": 20}
+  },
+  "fault_semantics": {
+    "loop_ma_below": {"threshold": 3.8, "meaning": "broken loop or dead transmitter, never a reading"},
+    "loop_ma_above": {"threshold": 20.5, "meaning": "transmitter fault or over-range"}
+  },
+  "failure_modes": [
+    "loop_ma < 3.8: wiring fault (live zero violated); do not log the mapped value",
+    "value frozen while weather changes: seized cups or stalled transmitter",
+    "mapped value pinned at range top: over-range or shorted loop"
+  ],
+  "mounting": "anemometer upright, rigid mount, no obstructions to cup rotation; strain-relieve the cable",
+  "packaged_dimensions_mm": "[PLACEHOLDER]",
+  "connector": "[PLACEHOLDER: keyed harness part number]",
+  "datasheet_uri": "mcp_server/resources/datasheets/anemometer_420ma.pdf"
+}

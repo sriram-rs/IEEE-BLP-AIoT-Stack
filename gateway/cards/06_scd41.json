@@ -1,0 +1,28 @@
+{
+  "card_version": "1.0",
+  "sensor_type_id": 6,
+  "schema_version": 1,
+  "part": "SCD41",
+  "packaged_part": "PSENS-010",
+  "sim": "SIM2",
+  "interface": "I2C @ 0x62, 3.3 V; note ~175 mA emitter pulses on the supply rail",
+  "measurands": [
+    {"name": "co2_ppm", "unit": "ppm", "range": [400, 5000], "accuracy": "±(40 ppm + 5% of reading) for 400-2000 ppm; wider above", "payload_field": {"offset": 0, "size": 2, "encoding": "uint16", "scale": 1}},
+    {"name": "temperature_c", "unit": "degC", "range": [-10, 60], "accuracy": "±0.8 degC", "payload_field": {"offset": 2, "size": 2, "encoding": "int16", "scale": 0.01}},
+    {"name": "humidity_pct", "unit": "%RH", "range": [0, 100], "accuracy": "±6 %RH", "payload_field": {"offset": 4, "size": 2, "encoding": "uint16", "scale": 0.01}}
+  ],
+  "sampling_period_s": 5,
+  "time_constants": {"rise_after_occupancy_s": [120, 300], "decay_after_vacancy_s": [300, 900]},
+  "plausibility": {
+    "co2_ppm": {"min": 380, "max": 5500, "max_step_per_min": 800}
+  },
+  "failure_modes": [
+    "flat ~400 ppm indoors with people present: inlet at a window/door, or ASC recalibrated against a non-ambient baseline",
+    "slow multi-week drift: automatic self-calibration history; needs a weekly fresh-air exposure",
+    "reading spikes with door events: inlet in an airflow path, remount"
+  ],
+  "mounting": "breathing-zone height 1.1-1.7 m, >50 cm from people, away from windows and doors",
+  "packaged_dimensions_mm": "[PLACEHOLDER]",
+  "connector": "[PLACEHOLDER: keyed harness part number]",
+  "datasheet_uri": "mcp_server/resources/datasheets/scd41.pdf"
+}

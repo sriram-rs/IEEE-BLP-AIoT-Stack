@@ -1,0 +1,8 @@
+{
+  "kit_id": null,
+  "company_id": 65535,
+  "db_path": "data/gateway.db",
+  "dashboard_port": 8931,
+  "downsample_period_s": 300,
+  "ble_adapter": null
+}

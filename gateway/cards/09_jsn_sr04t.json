@@ -1,0 +1,28 @@
+{
+  "card_version": "1.0",
+  "sensor_type_id": 9,
+  "schema_version": 1,
+  "part": "JSN-SR04T",
+  "packaged_part": "PSENS-013",
+  "sim": "SIM4",
+  "interface": "trigger/echo pulse-width on two GPIO lines (not analog); SIM4 firmware uses pulse capture; 5 V from boost converter",
+  "measurands": [
+    {"name": "distance_mm", "unit": "mm", "range": [200, 4500], "accuracy": "resolution 3-5 mm; practical ±10 mm, surface and temperature dependent", "payload_field": {"offset": 0, "size": 2, "encoding": "uint16", "scale": 1}}
+  ],
+  "sampling_period_s": 5,
+  "corrections": {
+    "speed_of_sound": "c = 331.3 + 0.606 * T_c m/s; pair with a DS18B20 near the air column and correct before computing volumes"
+  },
+  "plausibility": {
+    "distance_mm": {"min": 180, "max": 4700, "max_step_per_min": 2000}
+  },
+  "failure_modes": [
+    "no echo: soft/angled target, out of range, or transducer failure; 'no echo' is a status, never a zero distance",
+    "readings inside 200 mm blind zone are invalid (transducer ring-down)",
+    "warm-air bias: uncorrected reads short by ~1% per 6 degC above calibration temperature"
+  ],
+  "mounting": "perpendicular to the target surface; inside tank lids keep the transducer face clear of condensation drips",
+  "packaged_dimensions_mm": "[PLACEHOLDER]",
+  "connector": "[PLACEHOLDER: keyed harness part number, must carry two GPIO lines]",
+  "datasheet_uri": "mcp_server/resources/datasheets/jsn_sr04t.pdf"
+}

@@ -1,0 +1,31 @@
+{
+  "card_version": "1.0",
+  "sensor_type_id": 12,
+  "schema_version": 1,
+  "part": "DFRobot SEN0193 capacitive soil moisture",
+  "packaged_part": "PSENS-016",
+  "sim": "SIM4",
+  "interface": "Analog 0-3.0 V into SIM4 ADC via divider (dry reference kept below 2.8 V); wetter soil reads LOWER voltage",
+  "measurands": [
+    {"name": "raw_mv", "unit": "mV", "range": [0, 3000], "accuracy": "raw oscillator output; meaningless without calibration anchors", "payload_field": {"offset": 0, "size": 2, "encoding": "uint16", "scale": 1}},
+    {"name": "moisture_pct", "unit": "%", "range": [0, 100], "accuracy": "repeatability ~±3-5% of scale after two-point calibration; no absolute vendor spec", "payload_field": {"offset": 2, "size": 2, "encoding": "uint16", "scale": 0.1}}
+  ],
+  "sampling_period_s": 10,
+  "calibration": {
+    "procedure": "agent-guided: hold in dry air (anchor_dry), immerse sensing area in water (anchor_wet); anchors stored in SIM NVS and mirrored here",
+    "anchor_dry_mv": "[PER-UNIT]",
+    "anchor_wet_mv": "[PER-UNIT]"
+  },
+  "plausibility": {
+    "moisture_pct": {"min": 0, "max": 100, "max_step_per_min": 40}
+  },
+  "failure_modes": [
+    "sudden drop to dry-air reading: probe pulled out or soil shrunk away from the paddle, not instant drought",
+    "reading pinned wet after irrigation: waterlogged pot or water film on the collar",
+    "calibration lost after SIM replacement: anchors live per probe, re-run the dialogue"
+  ],
+  "mounting": "fully inserted to the collar line, firm soil contact, electronics end above grade and rain-protected",
+  "packaged_dimensions_mm": "[PLACEHOLDER]",
+  "connector": "[PLACEHOLDER: keyed harness part number]",
+  "datasheet_uri": "mcp_server/resources/datasheets/sen0193.pdf"
+}

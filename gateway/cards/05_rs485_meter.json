@@ -1,0 +1,28 @@
+{
+  "card_version": "1.0",
+  "sensor_type_id": 5,
+  "schema_version": 1,
+  "part": "RS485 energy meter (class 1), Modbus RTU slave",
+  "packaged_part": "PSENS-007",
+  "sim": "SIM5",
+  "interface": "RS485 Modbus RTU, SIM is bus master; register map served as MCP resource",
+  "measurands": [
+    {"name": "voltage_v", "unit": "V", "range": [0, 300], "accuracy": "class 1 (±1%)", "payload_field": {"offset": 0, "size": 2, "encoding": "uint16", "scale": 0.01}},
+    {"name": "power_w", "unit": "W", "range": [0, 6000], "accuracy": "class 1 (±1%)", "payload_field": {"offset": 2, "size": 2, "encoding": "uint16", "scale": 1}},
+    {"name": "energy_kwh", "unit": "kWh", "range": [0, 42949672], "accuracy": "class 1 (±1%)", "payload_field": {"offset": 4, "size": 4, "encoding": "uint32", "scale": 0.01}}
+  ],
+  "sampling_period_s": 10,
+  "plausibility": {
+    "voltage_v": {"min": 180, "max": 260, "max_step_per_min": 40},
+    "power_w": {"min": 0, "max": 6000, "max_step_per_min": 6000}
+  },
+  "failure_modes": [
+    "Modbus timeout: sensor_ok bit drops; a comms fault is not a zero-power reading",
+    "register value frozen across load changes: stuck slave, power-cycle the meter",
+    "energy counter going backwards: register decode error, check word order against the map"
+  ],
+  "mounting": "panel-mounted; meter powered from AC inlet; load on metered outlet",
+  "packaged_dimensions_mm": "[PLACEHOLDER]",
+  "connector": "[PLACEHOLDER: keyed harness part number]",
+  "datasheet_uri": "mcp_server/resources/datasheets/energy_meter_modbus_map.pdf"
+}

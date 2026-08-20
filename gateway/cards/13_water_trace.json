@@ -1,0 +1,27 @@
+{
+  "card_version": "1.0",
+  "sensor_type_id": 13,
+  "schema_version": 1,
+  "part": "RadioStudio bare-trace water presence PCB",
+  "packaged_part": "PSENS-017",
+  "sim": "SIM4",
+  "interface": "Interdigitated traces read resistively via pull-up into SIM4 ADC; excitation duty-cycled in firmware to prevent electrolysis",
+  "measurands": [
+    {"name": "wet", "unit": "bool", "range": [0, 1], "accuracy": "binary event; threshold set on raw_mv", "payload_field": {"offset": 0, "size": 1, "encoding": "uint8", "scale": 1}},
+    {"name": "raw_mv", "unit": "mV", "range": [0, 3300], "accuracy": "dry reads near pull-up rail, wet reads low", "payload_field": {"offset": 1, "size": 2, "encoding": "uint16", "scale": 1}}
+  ],
+  "sampling_period_s": 5,
+  "liveness": "expected silent for months; watchdog verifies seq heartbeat weekly; wet=0 from a dead sensor and from a dry floor are indistinguishable without it",
+  "plausibility": {
+    "wet": {"min": 0, "max": 1, "max_step_per_min": 1}
+  },
+  "failure_modes": [
+    "gradual raw_mv drift downward while dry: dust/condensation film accumulating, clean the traces",
+    "stuck wet after the floor dried: residue bridging traces",
+    "no frames at all: dead SIM, not a dry floor; liveness check is the only defence"
+  ],
+  "mounting": "flat on the lowest point of the protected floor, traces up, cable strain-relieved",
+  "packaged_dimensions_mm": "approximately 30 x 10 mm sensing area [PLACEHOLDER: confirm production PCB]",
+  "connector": "[PLACEHOLDER: keyed harness part number]",
+  "datasheet_uri": "mcp_server/resources/datasheets/water_trace.pdf"
+}

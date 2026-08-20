@@ -1,0 +1,26 @@
+{
+  "card_version": "1.0",
+  "sensor_type_id": 14,
+  "schema_version": 1,
+  "part": "AT42QT1010",
+  "packaged_part": "PSENS-018",
+  "sim": "SIM3",
+  "interface": "GPIO digital HIGH/LOW, same firmware path as PIR; 1.8-5.5 V, ~3 uA in low-power mode",
+  "measurands": [
+    {"name": "present", "unit": "bool", "range": [0, 1], "accuracy": "proximity/touch within ~2-3 cm of the electrode; not room-scale presence", "payload_field": {"offset": 0, "size": 1, "encoding": "uint8", "scale": 1}},
+    {"name": "touch_count", "unit": "count", "range": [0, 65535], "accuracy": "exact within wrap", "payload_field": {"offset": 1, "size": 2, "encoding": "uint16", "scale": 1}}
+  ],
+  "sampling_period_s": 2,
+  "plausibility": {
+    "present": {"min": 0, "max": 1, "max_step_per_min": 1}
+  },
+  "failure_modes": [
+    "long-held object fades into baseline: the IC recalibrates it away (timeout is configuration-dependent); treat very long constant 'present' with mild suspicion",
+    "sensitivity shifts with electrode geometry and nearby grounded metal; re-tune after any mechanical change",
+    "false triggers from water films on the electrode surface"
+  ],
+  "mounting": "electrode pad under the surface where the object rests; keep high-voltage wiring away from the electrode",
+  "packaged_dimensions_mm": "[PLACEHOLDER]",
+  "connector": "[PLACEHOLDER: keyed harness part number]",
+  "datasheet_uri": "mcp_server/resources/datasheets/at42qt1010.pdf"
+}

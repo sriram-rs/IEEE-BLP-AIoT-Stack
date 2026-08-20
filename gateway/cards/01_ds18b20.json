@@ -1,0 +1,31 @@
+{
+  "card_version": "1.0",
+  "sensor_type_id": 1,
+  "schema_version": 1,
+  "part": "DS18B20",
+  "packaged_part": "PSENS-001",
+  "sim": "SIM1",
+  "interface": "One-Wire, parasite or 3.3 V powered, daisy-chainable",
+  "measurands": [
+    {
+      "name": "temperature_c",
+      "unit": "degC",
+      "range": [-55, 125],
+      "accuracy": "±0.5 degC from -10 to +85 degC, wider outside",
+      "payload_field": {"offset": 0, "size": 2, "encoding": "int16", "scale": 0.01}
+    }
+  ],
+  "sampling_period_s": 5,
+  "plausibility": {
+    "temperature_c": {"min": -40, "max": 85, "max_step_per_min": 10}
+  },
+  "failure_modes": [
+    "reads +85.0 exactly: power-on reset default, bus fault, not a real reading",
+    "reads -127 or CRC errors: wiring or bus contention",
+    "slow drift against a reference: sensor aged or self-heating in enclosure"
+  ],
+  "mounting": "shaded, ventilated, away from direct sun and heat sources; not rain-exposed in this packaging",
+  "packaged_dimensions_mm": "[PLACEHOLDER]",
+  "connector": "[PLACEHOLDER: keyed harness part number]",
+  "datasheet_uri": "mcp_server/resources/datasheets/ds18b20.pdf"
+}

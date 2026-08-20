@@ -1,0 +1,13 @@
+{
+  "name": "corridor_lighting",
+  "description": "Lights on only when there is motion AND daylight is insufficient (Capstone C2). Authored at design time; runs with no model in the path.",
+  "when": {
+    "all": [
+      {"sensor": "1:7", "field": "lux", "op": "<", "value": 300, "for_s": 10},
+      {"sensor": "1:3", "field": "motion", "op": "==", "value": 1, "within_s": 60}
+    ]
+  },
+  "on_fault": "skip",
+  "action": {"type": "log", "message": "corridor lights ON (motion present, lux below 300)"},
+  "cooldown_s": 120
+}

@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AIoT Gateway</title>
+<style>
+  body { font-family: system-ui, sans-serif; margin: 1.5rem; background: #fafafa; color: #222; }
+  h1 { font-size: 1.3rem; color: #1b5e8a; }
+  table { border-collapse: collapse; width: 100%; background: #fff; }
+  th, td { padding: .45rem .7rem; border-bottom: 1px solid #e2e2e2; text-align: left; font-size: .9rem; }
+  th { background: #1b5e8a; color: #fff; }
+  .bad { color: #b02020; font-weight: 600; }
+  .ok { color: #1a7a3a; }
+  #ann { margin-top: 1.2rem; font-size: .85rem; color: #555; }
+  .stale { opacity: .55; }
+</style>
+</head>
+<body>
+<h1>AIoT Gateway: live sensors</h1>
+<p>Thin view for the bench. The real product surface is the MCP server; ask the model, not this page.</p>
+<table id="tbl"><thead>
+<tr><th>UID</th><th>Part</th><th>Latest values</th><th>Age</th><th>Status</th><th>Delivery</th></tr>
+</thead><tbody></tbody></table>
+<div id="ann"></div>
+<script>
+async function refresh() {
+  const sensors = await (await fetch('/api/sensors')).json();
+  const tbody = document.querySelector('#tbl tbody');
+  tbody.innerHTML = '';
+  for (const s of sensors) {
+    const latest = await (await fetch('/api/latest/' + s.uid)).json();
+    const vals = latest.fields
+      ? Object.entries(latest.fields).map(([k, v]) => `${k}=${Number(v.value).toFixed(2)}`).join('  ')
+      : '(none)';
+    const age = latest.fields ? Math.min(...Object.values(latest.fields).map(f => f.age_s)) : null;
+    const tr = document.createElement('tr');
+    if (age !== null && age > 60) tr.className = 'stale';
+    tr.innerHTML = `<td>${s.uid}</td><td>${s.part ?? ''}</td><td>${vals}</td>` +
+      `<td>${age === null ? '-' : age.toFixed(0) + 's'}</td>` +
+      `<td class="${s.sensor_ok ? 'ok' : 'bad'}">${s.sensor_ok ? 'ok' : 'FAULT'}${s.low_batt ? ' / low batt' : ''}</td>` +
+      `<td>${(s.delivery_ratio * 100).toFixed(1)}%</td>`;
+    tbody.appendChild(tr);
+  }
+  const ann = await (await fetch('/api/annotations')).json();
+  document.getElementById('ann').innerHTML = '<b>Journal (24 h):</b><br>' +
+    ann.slice(-12).map(a => `${new Date(a.ts * 1000).toLocaleTimeString()} [${a.author ?? '?'}] ${a.note}`).join('<br>');
+}
+refresh();
+setInterval(refresh, 5000);
+</script>
+</body>
+</html>

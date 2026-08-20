@@ -1,0 +1,85 @@
+# AIoT Gateway
+
+Reference implementation of the gateway contract from
+`../00_ARCHITECTURE_AND_CODE_STRUCTURE.md` Section 7: BLE scan in, card-driven
+decode, SQLite timeseries store, MCP endpoint out, deterministic edge rules,
+cloud-loop agent orchestration.
+
+## Quick start (no hardware needed)
+
+From the `ai_first_course/` directory:
+
+```
+python -m gateway smoke        # end-to-end self-test
+python -m gateway simulate     # 14 simulated SIMs + dashboard on :8080
+```
+
+With hardware and `pip install bleak`:
+
+```
+python -m gateway run          # live BLE scan + dashboard
+```
+
+MCP for Claude (`pip install mcp`), then in Claude Desktop / Claude Code:
+
+```
+python -m gateway mcp          # stdio transport
+```
+
+## Command reference
+
+| Command | Purpose |
+|---|---|
+| `run` | live BLE scan into the store, rules evaluated, dashboard served |
+| `simulate [--fault 1:stuck]` | same pipeline on simulated SIMs; fault injection for the validation labs |
+| `mcp` | MCP server: 10 tools, card resources, experiment prompt templates |
+| `dashboard` | thin local view only |
+| `recipe occupancy` | cloud-loop fusion recipe -> evidence pack (+model answer if ANTHROPIC_API_KEY set) |
+| `liveness` | watchdog pass: flags silent sensors into the journal |
+| `approve-rule <name>` | human approval step for agent-authored rules |
+| `token` | prints the deploy_rule capability token to hand to an agent |
+| `downsample` | roll old raw rows into aggregates (eMMC-friendly) |
+| `smoke` | self-test of the whole pipeline |
+
+## Layout (mirrors the architecture document)
+
+```
+gateway/
+├── core.py                BLE payload spec (the one place the frame layout lives)
+├── pipeline.py            scan -> dedupe -> decode -> reconcile -> store -> rules
+├── scanner/   ble_scan.py (bleak), dedupe.py, sim_source.py (14-SIM simulator)
+├── decoder/   registry.py (cards -> parsers), reconcile.py (seq loss, tick alignment)
+├── store/     db.py (SQLite WAL), downsample.py
+├── cards/     14 sensor cards (JSON), the machine-readable contracts
+├── mcp_server/ server.py + tools/ (8 tools), prompts/, resources/
+├── rules/     engine.py (deterministic, no LLM), rules.d/ (approved + .pending)
+├── agents/    orchestrator.py (recipes, watchdog), recipes/
+├── dashboard/ stdlib HTTP + one page, localhost only
+└── tests/     smoke_test.py
+```
+
+## Porting to Raspberry Pi / Arduino Uno Q
+
+The code is identical on all targets; porting is environment work:
+
+1. **Python 3.10+** on the target (Raspberry Pi OS and the Uno Q Debian side
+   both ship it). Copy the `gateway/` directory, `pip install -r
+   gateway/requirements.txt`.
+2. **BLE backend:** bleak uses BlueZ on Linux automatically. Give the user
+   bluetooth permissions or run with the `bluetooth` group. On the Uno Q,
+   verify BlueZ passive-scan throughput with several beacons before a
+   classroom deployment (flagged in the architecture review); the code falls
+   back to active scanning by itself.
+3. **GPIO actions:** `rules/engine.py` has a clearly marked stub for the
+   `gpio` action type; map it to gpiozero or libgpiod on the target. Rule
+   specs do not change.
+4. **Storage:** on the Uno Q keep the WAL store on eMMC but schedule
+   `python -m gateway downsample` daily (cron) to bound writes; on a Pi with
+   an SD card do the same.
+5. **Service:** run `python -m gateway run` under systemd; run `mcp` on
+   demand or expose it via an SSE transport if the cloud loop connects
+   remotely.
+
+Nothing in the pipeline imports Windows-only or Linux-only modules; the smoke
+test is the porting acceptance test: if `python -m gateway smoke` passes on
+the target, the gateway works there.

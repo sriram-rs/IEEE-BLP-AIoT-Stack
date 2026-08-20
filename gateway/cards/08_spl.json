@@ -1,0 +1,26 @@
+{
+  "card_version": "1.0",
+  "sensor_type_id": 8,
+  "schema_version": 1,
+  "part": "MEMS mic + envelope detector (SPL)",
+  "packaged_part": "PSENS-012",
+  "sim": "SIM4",
+  "interface": "Analog DC envelope into SIM4 ADC; no audio content exists past the detector",
+  "measurands": [
+    {"name": "spl_db", "unit": "dB", "range": [30, 120], "accuracy": "±2-3 dB after single-point calibration [to be characterised on final hardware]", "payload_field": {"offset": 0, "size": 2, "encoding": "uint16", "scale": 0.1}}
+  ],
+  "sampling_period_s": 2,
+  "privacy": "amplitude only, by hardware; speech is unrecoverable and no policy can change that",
+  "plausibility": {
+    "spl_db": {"min": 25, "max": 125, "max_step_per_min": 60}
+  },
+  "failure_modes": [
+    "flat at the floor (~30 dB) during obvious activity: mic or bias failure",
+    "constant high reading: envelope capacitor fault or mechanical vibration on the enclosure",
+    "baseline shift after remounting: recalibrate the single-point offset"
+  ],
+  "mounting": "away from HVAC outlets and direct mechanical contact with vibrating surfaces",
+  "packaged_dimensions_mm": "[PLACEHOLDER]",
+  "connector": "[PLACEHOLDER: keyed harness part number]",
+  "datasheet_uri": "mcp_server/resources/datasheets/spl_envelope.pdf"
+}

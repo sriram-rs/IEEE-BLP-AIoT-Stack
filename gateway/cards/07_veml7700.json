@@ -1,0 +1,25 @@
+{
+  "card_version": "1.0",
+  "sensor_type_id": 7,
+  "schema_version": 1,
+  "part": "VEML7700",
+  "packaged_part": "PSENS-011",
+  "sim": "SIM2",
+  "interface": "I2C @ 0x10, 3.3 V",
+  "measurands": [
+    {"name": "lux", "unit": "lux", "range": [0.0036, 120000], "accuracy": "approximately ±10% typical after calibration; enclosure window dominates error", "payload_field": {"offset": 0, "size": 4, "encoding": "uint32", "scale": 0.01}}
+  ],
+  "sampling_period_s": 5,
+  "plausibility": {
+    "lux": {"min": 0, "max": 130000, "max_step_per_min": 120000}
+  },
+  "failure_modes": [
+    "zero at noon: sensor covered, enclosure window blocked, or gain misconfigured",
+    "reading is strictly local: a shadow on the sensor is not a dark room",
+    "saturation plateau in direct sun: gain/integration auto-ranging lag"
+  ],
+  "mounting": "orient toward the light field of interest; keep the window clean; note mounting in the deployment journal",
+  "packaged_dimensions_mm": "[PLACEHOLDER]",
+  "connector": "[PLACEHOLDER: keyed harness part number]",
+  "datasheet_uri": "mcp_server/resources/datasheets/veml7700.pdf"
+}

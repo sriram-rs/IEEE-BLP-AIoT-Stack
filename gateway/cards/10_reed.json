@@ -1,0 +1,26 @@
+{
+  "card_version": "1.0",
+  "sensor_type_id": 10,
+  "schema_version": 1,
+  "part": "Reed switch + magnet pair",
+  "packaged_part": "PSENS-014",
+  "sim": "SIM3",
+  "interface": "GPIO digital with pull-up, interrupt-timestamped transitions",
+  "measurands": [
+    {"name": "door_open", "unit": "bool", "range": [0, 1], "accuracy": "state, exact; meaning depends on magnet alignment", "payload_field": {"offset": 0, "size": 1, "encoding": "uint8", "scale": 1}},
+    {"name": "transition_count", "unit": "count", "range": [0, 65535], "accuracy": "exact within wrap", "payload_field": {"offset": 1, "size": 2, "encoding": "uint16", "scale": 1}}
+  ],
+  "sampling_period_s": 2,
+  "plausibility": {
+    "door_open": {"min": 0, "max": 1, "max_step_per_min": 1}
+  },
+  "failure_modes": [
+    "reads open forever: fallen or shifted magnet, not necessarily an open door",
+    "chatter (rapid transitions): loose door in wind or magnet at threshold distance; debounce in SIM firmware",
+    "silent for months is normal; verify liveness via seq heartbeat, never assume"
+  ],
+  "mounting": "switch on frame, magnet on the moving leaf, gap under 15 mm when closed",
+  "packaged_dimensions_mm": "[PLACEHOLDER]",
+  "connector": "[PLACEHOLDER: keyed harness part number]",
+  "datasheet_uri": "mcp_server/resources/datasheets/reed.pdf"
+}

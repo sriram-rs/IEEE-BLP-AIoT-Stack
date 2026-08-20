@@ -1,0 +1,12 @@
+{
+  "name": "occupancy",
+  "question": "Is the room occupied right now, and how confident are we? (Capstone C1 core)",
+  "window_s": 1800,
+  "sensors": [
+    {"uid": "1:3", "field": "motion", "role": "fast channel (Absence of Evidence: silence is not emptiness)", "agg": "max", "bucket_s": 60},
+    {"uid": "1:8", "field": "spl_db", "role": "instant activity level", "agg": "mean", "bucket_s": 60},
+    {"uid": "1:6", "field": "co2_ppm", "role": "slow integrator (Evidence With Latency: confirms or vetoes)", "agg": "mean", "bucket_s": 120},
+    {"uid": "1:10", "field": "door_open", "role": "context gate (envelope-open marks CO2 invalid for occupancy)", "agg": "max", "bucket_s": 60}
+  ],
+  "reasoning_prompt": "Fuse the four channels into an occupancy state (EMPTY / LOW_OCCUPANCY / OCCUPIED / ACTIVE). PIR silence alone must never produce EMPTY; require CO2 decay and SPL floor agreement. Mark any window where door_open=1 as envelope-open and exclude the CO2 evidence there. State the single most likely occupancy narrative and what evidence would change your mind."
+}

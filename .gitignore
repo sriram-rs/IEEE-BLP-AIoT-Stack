@@ -1,0 +1,4 @@
+.venv-gateway/
+__pycache__/
+*.pyc
+gateway/data/

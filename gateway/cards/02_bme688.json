@@ -1,0 +1,33 @@
+{
+  "card_version": "1.0",
+  "sensor_type_id": 2,
+  "schema_version": 1,
+  "part": "BME688",
+  "packaged_part": "PSENS-002",
+  "sim": "SIM2",
+  "interface": "I2C @ 0x76, 3.3 V",
+  "measurands": [
+    {"name": "temperature_c", "unit": "degC", "range": [-40, 85], "accuracy": "±1 degC (verify against datasheet before print)", "payload_field": {"offset": 0, "size": 2, "encoding": "int16", "scale": 0.01}},
+    {"name": "humidity_pct", "unit": "%RH", "range": [0, 100], "accuracy": "±3 %RH", "payload_field": {"offset": 2, "size": 2, "encoding": "uint16", "scale": 0.01}},
+    {"name": "pressure_hpa", "unit": "hPa", "range": [300, 1100], "accuracy": "±0.6 hPa", "payload_field": {"offset": 4, "size": 2, "encoding": "uint16", "scale": 0.1}},
+    {"name": "iaq", "unit": "index", "range": [0, 500], "accuracy": "BSEC inference, not a measurement", "payload_field": {"offset": 6, "size": 2, "encoding": "uint16", "scale": 0.1}},
+    {"name": "eco2_ppm", "unit": "ppm", "range": [400, 5000], "accuracy": "estimate derived from VOC response; SCD41 is the reference", "payload_field": {"offset": 8, "size": 2, "encoding": "uint16", "scale": 1}},
+    {"name": "bvoc_ppm", "unit": "ppm", "range": [0, 50], "accuracy": "BSEC inference", "payload_field": {"offset": 10, "size": 2, "encoding": "uint16", "scale": 0.01}}
+  ],
+  "sampling_period_s": 5,
+  "plausibility": {
+    "temperature_c": {"min": -20, "max": 60, "max_step_per_min": 8},
+    "humidity_pct": {"min": 5, "max": 100, "max_step_per_min": 25},
+    "pressure_hpa": {"min": 870, "max": 1085, "max_step_per_min": 3},
+    "eco2_ppm": {"min": 380, "max": 5500, "max_step_per_min": 1500}
+  },
+  "failure_modes": [
+    "iaq stuck at 25 with accuracy flag low: BSEC still calibrating (first 5-30 min)",
+    "eco2 spikes on sanitiser or solvent use: VOC event, not CO2; adjudicate against SCD41",
+    "temperature reads high: gas heater plate self-heating; rely on card offset compensation"
+  ],
+  "mounting": "breathing-zone height, away from direct airflow, sunlight, and solvent sources",
+  "packaged_dimensions_mm": "[PLACEHOLDER]",
+  "connector": "[PLACEHOLDER: keyed harness part number]",
+  "datasheet_uri": "mcp_server/resources/datasheets/bme688.pdf"
+}

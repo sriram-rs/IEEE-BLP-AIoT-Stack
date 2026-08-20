@@ -1,0 +1,27 @@
+{
+  "card_version": "1.0",
+  "sensor_type_id": 11,
+  "schema_version": 1,
+  "part": "SCT-013-030 (internal burden resistor variant only)",
+  "packaged_part": "PSENS-015",
+  "sim": "SIM4",
+  "interface": "0-1 V AC into biased SIM4 ADC; firmware samples ~1 kHz and reports RMS once per second",
+  "measurands": [
+    {"name": "irms_a", "unit": "A", "range": [0, 30], "accuracy": "~1-2% mid-range; unreliable below ~0.05 A; ~24 mA floor unassisted", "payload_field": {"offset": 0, "size": 2, "encoding": "uint16", "scale": 0.001}},
+    {"name": "apparent_va", "unit": "VA", "range": [0, 7200], "accuracy": "assumes 230 V nominal; ±(voltage variation + current error)", "payload_field": {"offset": 2, "size": 2, "encoding": "uint16", "scale": 1}}
+  ],
+  "sampling_period_s": 2,
+  "acceptance_test": "clamp on a known resistive load (kettle); reading must match P/230 within ±10% before data collection begins; record result via annotate",
+  "plausibility": {
+    "irms_a": {"min": 0, "max": 31, "max_step_per_min": 31}
+  },
+  "failure_modes": [
+    "systematic underreading: jaw not fully closed; a gap invisible to the eye can halve the reading and it stays plausible-looking",
+    "near-zero on a live circuit: clamped around live+neutral together (flux cancels), clamp one conductor only",
+    "baseline sag over weeks at constant load: spring fatigue, re-seat the jaw"
+  ],
+  "mounting": "single conductor through the jaw; secure the CT body so cable movement cannot work the jaw open",
+  "packaged_dimensions_mm": "[PLACEHOLDER]",
+  "connector": "[PLACEHOLDER: keyed harness part number]",
+  "datasheet_uri": "mcp_server/resources/datasheets/sct013.pdf"
+}
