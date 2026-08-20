@@ -24,7 +24,13 @@ echo == AIoT Gateway setup (Windows) ==
 echo.
 
 rem 1. Find a Python 3 interpreter (Python Launcher first, then plain python).
+rem The Python snippets below are kept in variables, not written directly
+rem inside the if (...) blocks - Windows batch counts parentheses in the raw
+rem script text to find where a block ends, and gets confused by the
+rem parentheses that are just a normal part of this Python code (e.g. the
+rem parentheses in "sys.exit(...)"), even though they're inside quotes.
 set "PYCMD="
+set "PY_CHECK_IS3=import sys; sys.exit(0 if sys.version_info[0]==3 else 1)"
 
 where py >nul 2>nul
 if %errorlevel%==0 (
@@ -35,7 +41,7 @@ if %errorlevel%==0 (
 if not defined PYCMD (
     where python >nul 2>nul
     if %errorlevel%==0 (
-        python -c "import sys; sys.exit(0 if sys.version_info[0]==3 else 1)" >nul 2>nul
+        python -c "!PY_CHECK_IS3!" >nul 2>nul
         if !errorlevel!==0 set "PYCMD=python"
     )
 )
@@ -51,9 +57,11 @@ if not defined PYCMD (
 )
 
 rem 2. Check the version is at least 3.10.
-%PYCMD% -c "import sys; sys.exit(0 if sys.version_info[:2] >= (3, 10) else 1)"
+set "PY_CHECK_310=import sys; sys.exit(0 if sys.version_info[:2] >= (3, 10) else 1)"
+set "PY_PRINT_VERSION=import platform; print(platform.python_version())"
+%PYCMD% -c "!PY_CHECK_310!"
 if not !errorlevel!==0 (
-    for /f "delims=" %%V in ('%PYCMD% -c "import platform; print(platform.python_version())"') do set "DETECTED=%%V"
+    for /f "delims=" %%V in ('%PYCMD% -c "!PY_PRINT_VERSION!"') do set "DETECTED=%%V"
     echo Detected Python !DETECTED!, but the gateway needs Python 3.10 or newer.
     echo Install a newer Python: https://www.python.org/downloads/
     exit /b 2
