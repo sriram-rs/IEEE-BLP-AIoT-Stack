@@ -2,6 +2,9 @@
 # Full gateway setup for macOS/Linux. Safe to run more than once.
 # Options: --recreate (rebuild the environment from scratch)
 #          --with-anthropic (also install the extra package for BYOK students)
+#          --with-pptx (also install python-pptx, needed only to regenerate
+#                       slides from sensor_decks/ via tools/md2pptx.py -
+#                       instructors/content authors only, not needed by students)
 set -u
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
@@ -9,10 +12,12 @@ cd "$SCRIPT_DIR"
 
 RECREATE=0
 WITH_ANTHROPIC=0
+WITH_PPTX=0
 for arg in "$@"; do
     case "$arg" in
         --recreate) RECREATE=1 ;;
         --with-anthropic) WITH_ANTHROPIC=1 ;;
+        --with-pptx) WITH_PPTX=1 ;;
     esac
 done
 
@@ -100,6 +105,12 @@ if [ "$WITH_ANTHROPIC" -eq 1 ]; then
     echo "Installing the anthropic package (--with-anthropic)..."
     "$VENV_PY" -m pip install "anthropic>=0.40" || \
         echo "Warning: could not install anthropic, you can retry later by hand."
+fi
+
+if [ "$WITH_PPTX" -eq 1 ]; then
+    echo "Installing python-pptx (--with-pptx)..."
+    "$VENV_PY" -m pip install "python-pptx>=0.6" || \
+        echo "Warning: could not install python-pptx, you can retry later by hand."
 fi
 
 # 6. Run the existing pass/fail test.

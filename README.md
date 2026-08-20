@@ -11,7 +11,7 @@ python3 start_installation.py     # macOS/Linux
 python start_installation.py      # Windows
 ```
 
-This sets up everything the gateway needs and runs its self-test. See `gateway/README.md` for what to do next.
+This sets up everything the gateway needs and runs its self-test. See `gateway/README.md` for what to do next. Full prerequisites (students and instructors) are in `PREREQUISITES.md`.
 
 ## Contents
 
@@ -41,6 +41,7 @@ This sets up everything the gateway needs and runs its self-test. See `gateway/R
 | `start_installation.py` | One-command student setup: detects your OS and runs `setup.sh` or `setup.bat` |
 | `setup.sh` / `setup.bat` | Full gateway setup (environment, dependencies, self-test) for macOS/Linux and Windows |
 | `gateway.sh` / `gateway.bat` | Run any gateway command after setup, e.g. `bash gateway.sh simulate`, with no manual environment activation |
+| `PREREQUISITES.md` | What you need installed, split by role: students (just Python) vs. instructors/content authors (also `python-pptx`, via `--with-pptx`) |
 | `firmware/rehearsal_advertiser/` | Single-sketch ESP32 known-good radio reference |
 | `firmware/sim-firmware/` | Production SIM firmware: PlatformIO, 5 variants, modular sensors, pins in one header |
 

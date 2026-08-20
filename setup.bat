@@ -4,15 +4,20 @@ setlocal enabledelayedexpansion
 rem Full gateway setup for Windows. Safe to run more than once.
 rem Options: --recreate (rebuild the environment from scratch)
 rem          --with-anthropic (also install the extra package for BYOK students)
+rem          --with-pptx (also install python-pptx, needed only to regenerate
+rem                       slides from sensor_decks/ via tools/md2pptx.py -
+rem                       instructors/content authors only, not needed by students)
 
 set "SCRIPT_DIR=%~dp0"
 cd /d "%SCRIPT_DIR%"
 
 set "RECREATE=0"
 set "WITH_ANTHROPIC=0"
+set "WITH_PPTX=0"
 for %%A in (%*) do (
     if /I "%%~A"=="--recreate" set "RECREATE=1"
     if /I "%%~A"=="--with-anthropic" set "WITH_ANTHROPIC=1"
+    if /I "%%~A"=="--with-pptx" set "WITH_PPTX=1"
 )
 
 echo == AIoT Gateway setup (Windows) ==
@@ -106,6 +111,11 @@ if not !errorlevel!==0 (
 if "%WITH_ANTHROPIC%"=="1" (
     echo Installing the anthropic package (--with-anthropic)...
     "%VENV_PY%" -m pip install "anthropic>=0.40"
+)
+
+if "%WITH_PPTX%"=="1" (
+    echo Installing python-pptx (--with-pptx)...
+    "%VENV_PY%" -m pip install "python-pptx>=0.6"
 )
 
 rem 6. Run the existing pass/fail test.
