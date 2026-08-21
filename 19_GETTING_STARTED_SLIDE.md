@@ -20,8 +20,9 @@ slot's job and there's no kit connected yet.
 - No git required, no manual download - this one line does everything
 - You'll know it worked when you see: `SMOKE TEST PASSED` and `Setup
   complete!`
-- Windows only: at the very end it says "Press Enter to close this
-  window" - that's expected, read the message first, then press Enter
+- Windows only: at the very end it says "Press Enter to continue" - that's
+  expected, read the message first, then press Enter (the window stays
+  open either way, ready for your next command)
 
 **Narration:**
 This is the only thing you need to type all morning. Open a terminal - on

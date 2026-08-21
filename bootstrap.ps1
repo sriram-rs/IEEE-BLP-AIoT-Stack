@@ -101,14 +101,13 @@ $ExitCode = 1
 
 Write-Host ""
 if ($ExitCode -eq 0) {
+    # The PREREQUISITES.md reminder already printed above, as part of
+    # setup.bat's own output - not repeated here.
     Write-Host "== Setup finished successfully. ==" -ForegroundColor Green
-    Write-Host "Before you start using the gateway, take a look at PREREQUISITES.md"
-    Write-Host "in the IEEE-BLP-AIoT-Stack folder - it covers a couple of one-time,"
-    Write-Host "one-per-machine things this script can't do for you (like turning"
-    Write-Host "Bluetooth on)."
 } else {
     Write-Host "== Setup did NOT finish successfully (exit code $ExitCode). ==" -ForegroundColor Red
     Write-Host "Scroll up to read the error message. Copy it and ask your instructor for help."
 }
 Write-Host ""
-Read-Host "Press Enter to close this window"
+Write-Host "You are now in: $(Get-Location)"
+Read-Host "Press Enter to continue (this window stays open - it does not close)"
