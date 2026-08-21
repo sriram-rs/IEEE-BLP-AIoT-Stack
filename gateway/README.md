@@ -31,11 +31,16 @@ python -m gateway smoke        # end-to-end self-test
 python -m gateway simulate     # 14 simulated SIMs + dashboard on :8080
 ```
 
-With hardware and `pip install bleak`:
+With hardware, Bluetooth turned on on your laptop, and `pip install bleak`:
 
 ```
 python -m gateway run          # live BLE scan + dashboard
 ```
+
+If Bluetooth is off, `run` starts and the dashboard still comes up, but no
+sensors will ever show up as online - turn Bluetooth on (in your OS's
+system settings, not something this gateway can do for you) and it starts
+picking them up.
 
 MCP for Claude (`pip install mcp`), then in Claude Desktop / Claude Code:
 

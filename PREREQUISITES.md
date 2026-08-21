@@ -61,6 +61,13 @@ This one command creates the environment and installs everything the
 gateway needs (see `gateway/requirements.txt`). No manual `pip install`
 required. See `README.md` and `gateway/README.md` for what to do next.
 
+One thing this can't set up for you: **Bluetooth needs to be turned on**
+on your laptop before `python -m gateway run` (live sensor scanning) will
+find any sensors - that's an OS-level setting, not something a script can
+switch on. Not needed for setup itself, or for `smoke`/`simulate`, which
+never touch real hardware - only for `run`, later, once you have a kit in
+hand.
+
 ## Instructors / content authors (regenerating slides)
 
 Everything above, plus `python-pptx`, only needed to turn the markdown

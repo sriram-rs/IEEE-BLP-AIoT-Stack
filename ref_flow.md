@@ -91,7 +91,12 @@ end up in the same place:
   required:** it needs `sudo`, which the scripts otherwise never require
   to finish successfully. `setup.sh` tries it automatically and falls back
   to a printed manual command if it can't - it never blocks the rest of
-  setup on it.
+  setup on it. This is a different thing from Bluetooth simply being
+  **switched on** - that's an OS-level hardware toggle, applies on every
+  OS (not just Linux), and no script can flip it for you. Setup itself,
+  `smoke`, and `simulate` never need real Bluetooth at all; only `run`
+  (live sensor scanning) does, and only once a kit is actually in hand -
+  see `PREREQUISITES.md` and `gateway/README.md`.
 - **Why `anthropic` and `python-pptx` are opt-in flags
   (`--with-anthropic`, `--with-pptx`) instead of always installed:**
   neither is needed by most students, and every unnecessary package is one
