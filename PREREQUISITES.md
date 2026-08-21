@@ -4,29 +4,49 @@ What you need installed before working with this repo, split by role.
 
 ## Getting the code onto your machine
 
-Recommended for students: **download the ZIP, no git needed.** We can't
-assume every student has git installed and configured, so this is the
-primary path - it needs nothing beyond what's already required below.
+### Fastest: one command does everything
 
-- On GitHub, switch the branch dropdown to `feature/onboarding-scripts`
-  (until it merges to `main`), then Code -> Download ZIP, and extract it.
-- One quirk: a ZIP download loses `setup.sh`'s "you're allowed to run
-  this" permission flag, so on macOS/Linux run it as `bash setup.sh`
-  rather than `./setup.sh` (running it via `python3 start_installation.py`
-  already does this for you automatically). Windows batch files don't
-  have this issue.
+The repo is public for the workshop, so a student can go from nothing to a
+fully set-up gateway with a single command - no manual download, no git,
+nothing to click through on GitHub:
 
-**If you already have git set up**, cloning is a fine alternative and
-makes pulling later updates easier:
 ```
-git clone https://github.com/sriram-rs/IEEE-BLP-AIoT-Stack.git
-cd IEEE-BLP-AIoT-Stack
-git checkout feature/onboarding-scripts   # until this merges to main
+curl -fsSL https://raw.githubusercontent.com/sriram-rs/IEEE-BLP-AIoT-Stack/feature/onboarding-scripts/bootstrap.sh | bash
 ```
+(macOS/Linux - paste into Terminal)
 
-Either way, nothing beyond Python (below) is required to actually run the
-setup - git is a convenience for getting/updating the code, not something
-`start_installation.py` itself needs.
+```
+iwr https://raw.githubusercontent.com/sriram-rs/IEEE-BLP-AIoT-Stack/feature/onboarding-scripts/bootstrap.ps1 -UseBasicParsing | iex
+```
+(Windows - paste into PowerShell)
+
+This downloads the code into a new `IEEE-BLP-AIoT-Stack` folder in whatever
+directory you run it from, then immediately runs the same one-command setup
+described below. If this stops working (e.g. the repo has gone back to
+private, or this branch has merged - check whether the URL above should
+say `main` instead of `feature/onboarding-scripts`), fall back to one of
+the manual options next.
+
+### Manual alternatives (no internet trust required, or if the one-liner stops working)
+
+- **Download the ZIP, no git needed:** on GitHub, switch the branch
+  dropdown to `feature/onboarding-scripts` (until it merges to `main`),
+  then Code -> Download ZIP, and extract it. One quirk: a ZIP download
+  loses `setup.sh`'s "you're allowed to run this" permission flag, so on
+  macOS/Linux run it as `bash setup.sh` rather than `./setup.sh` (running
+  it via `python3 start_installation.py` already does this for you
+  automatically). Windows batch files don't have this issue.
+- **If you already have git set up**, cloning is a fine alternative and
+  makes pulling later updates easier:
+  ```
+  git clone https://github.com/sriram-rs/IEEE-BLP-AIoT-Stack.git
+  cd IEEE-BLP-AIoT-Stack
+  git checkout feature/onboarding-scripts   # until this merges to main
+  ```
+
+Whichever way you get the code, nothing beyond Python (below) is required
+to actually run the setup - git is only a convenience for getting/updating
+the code, never something `start_installation.py` itself needs.
 
 ## Students (workshop laptop)
 

@@ -4,14 +4,19 @@ Generated 5 August 2026. Supersedes the sensor-chapter structure of the Rev5 man
 
 ## Getting started (students)
 
-Get your laptop ready for the workshop with one command, no manual setup steps:
+Get your laptop ready for the workshop with one command - no download, no git, no manual setup steps:
 
 ```
-python3 start_installation.py     # macOS/Linux
-python start_installation.py      # Windows
+curl -fsSL https://raw.githubusercontent.com/sriram-rs/IEEE-BLP-AIoT-Stack/feature/onboarding-scripts/bootstrap.sh | bash
+```
+(macOS/Linux) or, in PowerShell on Windows:
+```
+iwr https://raw.githubusercontent.com/sriram-rs/IEEE-BLP-AIoT-Stack/feature/onboarding-scripts/bootstrap.ps1 -UseBasicParsing | iex
 ```
 
-This sets up everything the gateway needs and runs its self-test. See `gateway/README.md` for what to do next. Full prerequisites (students and instructors) are in `PREREQUISITES.md`.
+Already have the code on your machine some other way? Just run `python3 start_installation.py` (macOS/Linux) or `python start_installation.py` (Windows) from inside it.
+
+Either way, this sets up everything the gateway needs and runs its self-test. See `gateway/README.md` for what to do next. Full prerequisites and manual-download alternatives (students and instructors) are in `PREREQUISITES.md`.
 
 ## Contents
 
@@ -38,6 +43,7 @@ This sets up everything the gateway needs and runs its self-test. See `gateway/R
 | `18_WORKSHOP_SCHEDULE.md` | 3-day session-by-session schedule with timings (Phase A Days 1-2, Phase B Day 3), 6-week mapping, instructor prep checklist |
 | `CONVERSATION_LOG_2026-08-05.md` | The design conversation with the course owner, prompts verbatim |
 | `gateway/` | Gateway codebase: BLE scan, card-driven decode, SQLite store, MCP server, rule engine, agents, dashboard |
+| `bootstrap.sh` / `bootstrap.ps1` | The one-liner entry point: downloads the code (no git needed) and runs setup, for macOS/Linux and Windows |
 | `start_installation.py` | One-command student setup: detects your OS and runs `setup.sh` or `setup.bat` |
 | `setup.sh` / `setup.bat` | Full gateway setup (environment, dependencies, self-test) for macOS/Linux and Windows |
 | `gateway.sh` / `gateway.bat` | Run any gateway command after setup, e.g. `bash gateway.sh simulate`, with no manual environment activation |
