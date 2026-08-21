@@ -41,6 +41,7 @@ Either way, this sets up everything the gateway needs and runs its self-test. Se
 | `16_AGENTIC_ARCHITECTURE_BRIEF_FOR_FIRMWARE_TEAM.md` | Handover brief: agentic AI vs assistant AI, the contract chain, every firmware design decision mapped to its agentic reason, bring-up checklist |
 | `17_WORKSHOP_WORKFLOWS_EDGE_FIRST.md` | SIM/gateway/system workflows; Phase A edge loop with zero LLM (student plays the agent via CLI tools), Phase B agentic cloud loop as extension; cheat sheet |
 | `18_WORKSHOP_SCHEDULE.md` | 3-day session-by-session schedule with timings (Phase A Days 1-2, Phase B Day 3), 6-week mapping, instructor prep checklist |
+| `19_GETTING_STARTED_SLIDE.md` | Day 1 Setup-slot slide/script: the one-liner, what success looks like, what to do when something goes wrong |
 | `CONVERSATION_LOG_2026-08-05.md` | The design conversation with the course owner, prompts verbatim |
 | `gateway/` | Gateway codebase: BLE scan, card-driven decode, SQLite store, MCP server, rule engine, agents, dashboard |
 | `bootstrap.sh` / `bootstrap.ps1` | The one-liner entry point: downloads the code (no git needed) and runs setup, for macOS/Linux and Windows |

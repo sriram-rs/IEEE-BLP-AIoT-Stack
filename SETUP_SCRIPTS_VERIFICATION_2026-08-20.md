@@ -106,6 +106,36 @@ Notable, expected details from this run, not bugs:
   program, not something these scripts can or need to suppress - worth
   mentioning to students once so it doesn't surprise them, but not a bug.
 
+## ZIP-bootstrap one-liner, tested on a second, separate Windows machine
+
+After the repo was made temporarily public for testing, `bootstrap.ps1`
+(the one-liner entry point that downloads the ZIP directly, no git
+involved at all) was tried on a different, fresh Windows machine than the
+one used for the git-clone tests above.
+
+- **First attempt failed** with a PowerShell error:
+  `Cannot convert 'System.Object' to the type 'System.Uri' required by
+  parameter 'Uri'. Specified method is not supported.` This looked like it
+  could be a real bug in how the one-liner passes the URL to
+  `Invoke-WebRequest`, so as a workaround it was split into three separate
+  statements (assign the URL to a variable, fetch it, then
+  `Invoke-Expression` the result) to isolate the failure.
+- **Retried the original one-liner again afterward, and it worked.** Since
+  it wasn't run enough times back-to-back to isolate a reliable repro, the
+  working theory is a one-off terminal paste/line-wrap issue with the long
+  single-line command, rather than a bug in `bootstrap.ps1` itself - but
+  this isn't confirmed, and the 3-statement form above is a safe fallback
+  to hand a student if they hit the same error.
+- Once it ran, the full flow succeeded end to end: ZIP downloaded and
+  extracted with no git installed on that machine, `start_installation.py`
+  ran automatically, setup completed, and afterward `python -m gateway run`
+  showed the live dashboard in a browser - confirming not just the
+  simulated demo path but the real BLE-scanning command too.
+- This machine already had Python 3.10+ installed, so this run only
+  exercises the happy path - it does not confirm what happens when
+  `bootstrap.ps1` has to print its "no Python found" message on a genuinely
+  bare machine.
+
 ## Not yet tested
 
 - `setup.bat` run standalone, skipping `start_installation.py` (already
@@ -115,6 +145,10 @@ Notable, expected details from this run, not bugs:
   correctly, but not individually run through on a Windows machine yet)
 - Behaviour when only the non-functional Microsoft Store Python placeholder
   is present, instead of a real install
+- `bootstrap.ps1`'s "no Python found" message, on a machine with no Python
+  at all
+- A reliable repro of the one-off `Invoke-WebRequest` / `System.Uri` error
+  above - if it recurs, note exactly how the command was typed/pasted
 
 ## Full raw output
 
