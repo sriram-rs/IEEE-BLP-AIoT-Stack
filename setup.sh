@@ -153,4 +153,9 @@ fi
 echo ""
 echo "Setup complete! Try:"
 echo "  bash gateway.sh simulate"
+echo ""
+echo "Before you use the gateway for real (python -m gateway run), take a"
+echo "look at PREREQUISITES.md - it covers a couple of one-time,"
+echo "one-per-machine things this script can't do for you (like turning"
+echo "Bluetooth on)."
 exit 0

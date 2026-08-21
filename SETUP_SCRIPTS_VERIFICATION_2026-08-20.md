@@ -136,6 +136,43 @@ one used for the git-clone tests above.
   `bootstrap.ps1` has to print its "no Python found" message on a genuinely
   bare machine.
 
+## Bug found and fixed: the one-liner closed the window before showing the result
+
+On a separate fresh-Windows attempt, the one-liner ran and (per the user
+checking manually afterward) actually succeeded - but the PowerShell
+window closed on its own right at the end, without ever showing whether
+it had worked. A student would have no way to know if setup succeeded or
+failed.
+
+**Cause:** `bootstrap.ps1` ended with `exit $LASTEXITCODE`. When a
+script's content is piped into `iex` (`Invoke-Expression`) - exactly what
+the one-liner does - that content runs inline in the *current* PowerShell
+session, not as a separate child process. A bare `exit` in that context
+doesn't just end the script, it closes the entire PowerShell window
+instantly, wiping out all the scrollback (including "Setup complete!",
+which had already printed) before anyone can read it.
+
+**Fix:** moved all the logic into a function and replaced every `exit N`
+with `return N` (which only leaves the function, not the session), then
+added an explicit final status message ("Setup finished successfully" or
+"did NOT finish successfully", with the exit code) plus a `Read-Host
+"Press Enter to close this window"` at the very end, so the window always
+stays open until the student has read the result and chosen to close it.
+Also fixed a related bug this introduced: moving the logic into a
+function meant `$args` inside it referred to the function's own
+(unbound) arguments rather than the outer script's - fixed by passing the
+script-level `$args` into the function explicitly as a parameter.
+
+`setup.sh`/`setup.bat` were never at risk of this specific bug -
+`start_installation.py` always launches them as real child processes,
+never through an inline-eval mechanism like `iex`.
+
+**Also added:** the final success message (in `bootstrap.ps1`,
+`setup.sh`, and `setup.bat` alike) now tells the student to read
+`PREREQUISITES.md` before actually using the gateway - that's where the
+"Bluetooth must be switched on" and other one-time, one-per-machine notes
+live.
+
 ## Not yet tested
 
 - `setup.bat` run standalone, skipping `start_installation.py` (already

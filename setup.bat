@@ -149,4 +149,9 @@ rem 7. Success.
 echo.
 echo Setup complete! Try:
 echo   gateway.bat simulate
+echo.
+echo Before you use the gateway for real, that is python -m gateway run,
+echo take a look at PREREQUISITES.md - it covers a couple of one-time,
+echo one-per-machine things this script can't do for you, like turning
+echo Bluetooth on.
 exit /b 0

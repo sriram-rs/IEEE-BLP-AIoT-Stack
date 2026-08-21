@@ -20,6 +20,8 @@ slot's job and there's no kit connected yet.
 - No git required, no manual download - this one line does everything
 - You'll know it worked when you see: `SMOKE TEST PASSED` and `Setup
   complete!`
+- Windows only: at the very end it says "Press Enter to close this
+  window" - that's expected, read the message first, then press Enter
 
 **Narration:**
 This is the only thing you need to type all morning. Open a terminal - on
@@ -35,7 +37,10 @@ know it worked when the last few lines say `SMOKE TEST PASSED` followed
 by `Setup complete!`. If you see anything else - a Python version
 complaint, a download failure, or the self-test itself reporting a
 failure - raise your hand, and keep the error message on screen so we can
-read it.
+read it. The setup script itself will also tell you to take a look at
+`PREREQUISITES.md` once it's done - that file covers the couple of
+one-time, one-per-machine things it can't do for you, like turning
+Bluetooth on, so actually go read it before S2, don't just skim past it.
 
 ## Slide: If something goes wrong
 

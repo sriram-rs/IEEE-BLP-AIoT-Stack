@@ -107,6 +107,16 @@ end up in the same place:
   block even when they're just plain text or inside quotes. This bit us
   twice during real Windows testing; the full story is in the verification
   doc.
+- **Why `bootstrap.ps1` wraps everything in a function and uses `return`
+  instead of `exit`:** when its content is piped into `iex`
+  (`Invoke-Expression`) - the whole point of the one-liner - it runs
+  inline in the *current* PowerShell session, not as a separate process.
+  A bare `exit` in that context closes the entire PowerShell window
+  instantly, which is exactly what happened during real testing: the
+  window closed before the student could see whether setup had actually
+  succeeded. `setup.sh`/`setup.bat` don't have this problem, since
+  `start_installation.py` always launches them as genuine child
+  processes, never via an inline-eval mechanism like `iex`.
 
 ## If something breaks
 
