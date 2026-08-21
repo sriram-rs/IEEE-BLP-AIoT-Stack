@@ -49,6 +49,7 @@ Either way, this sets up everything the gateway needs and runs its self-test. Se
 | `setup.sh` / `setup.bat` | Full gateway setup (environment, dependencies, self-test) for macOS/Linux and Windows |
 | `gateway.sh` / `gateway.bat` | Run any gateway command after setup, e.g. `bash gateway.sh simulate`, with no manual environment activation |
 | `PREREQUISITES.md` | What you need installed, split by role: students (just Python) vs. instructors/content authors (also `python-pptx`, via `--with-pptx`) |
+| `ref_flow.md` | How the onboarding scripts fit together: the full call chain, what each file is responsible for, and key design decisions behind them |
 | `firmware/rehearsal_advertiser/` | Single-sketch ESP32 known-good radio reference |
 | `firmware/sim-firmware/` | Production SIM firmware: PlatformIO, 5 variants, modular sensors, pins in one header |
 
