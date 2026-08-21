@@ -210,6 +210,21 @@ own - worth remembering before reaching for a "wrap it in a function"
 pattern again in a script whose job includes visibly streaming a nested
 process's output.
 
+**Confirmed fixed:** re-ran the same one-liner a third time, on the same
+machine (reusing the existing `.venv-gateway` again). One wrinkle first -
+the immediate retry after pushing served the *previous* (buggy) version,
+because `raw.githubusercontent.com` sits behind a CDN with up to a
+5-minute cache (`cache-control: max-age=300`); a cache-busting query
+string (`?cb=1`) forced a fresh fetch. With the real fix served, the run
+completed cleanly end to end: full setup output streamed normally,
+`SMOKE TEST PASSED`, followed by a correct `== Setup finished
+successfully. ==` message (no garbling, no false failure), the
+`PREREQUISITES.md` reminder, and `Press Enter to close this window`
+staying up until dismissed. One minor, harmless redundancy noted: the
+`PREREQUISITES.md` reminder currently prints twice (once from
+`setup.bat`'s own message, once from `bootstrap.ps1`'s final banner) -
+not fixed, just noted in case it's worth trimming later.
+
 ## Not yet tested
 
 - `setup.bat` run standalone, skipping `start_installation.py` (already
