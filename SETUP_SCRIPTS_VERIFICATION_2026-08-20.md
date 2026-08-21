@@ -173,6 +173,43 @@ never through an inline-eval mechanism like `iex`.
 "Bluetooth must be switched on" and other one-time, one-per-machine notes
 live.
 
+## Bug found and fixed: the function-wrapper fix above created a second bug
+
+Re-tested the fix above (same idempotent one-liner, second run on the same
+machine, reusing the existing `.venv-gateway`). The window stayed open this
+time - that part of the fix worked - but the final message was garbled:
+it printed the *entire* nested setup output crammed into the "exit code"
+placeholder, something like `Setup did NOT finish successfully (exit code
+== AIoT Gateway setup (Windows) == ... Setup complete! ... 0).`, and took
+the failure branch even though `SMOKE TEST PASSED` and `Setup complete!`
+had both printed - i.e. the real result was success, but it reported
+failure.
+
+**Cause:** the previous fix's function-plus-`return` pattern was called as
+`$AiotExitCode = Invoke-AiotBootstrap ...`. In PowerShell, assigning a
+function call to a variable captures *everything the function emits*, not
+just its explicit `return` value - including every console-output line
+from the nested `& $PyExe ... start_installation.py` call inside it, since
+that output wasn't redirected anywhere. So `$AiotExitCode` became an array
+of all that text with the real exit code (`0`) as its last element, not a
+plain integer. PowerShell then evaluates a single-element array like
+`@(0)` as falsy in an `if` condition (it unwraps the array and judges the
+element, and integer `0` is falsy) - so a genuinely successful run
+(`$AiotExitCode -eq 0` matched, wrapped as `@(0)`, evaluated falsy) took
+the "did NOT finish successfully" branch.
+
+**Fix:** removed the function entirely. `bootstrap.ps1` now uses a plain
+top-level `:main do { ... } while ($false)` block with `break main` for
+every early-exit path, and a plain script-scope `$ExitCode` variable set
+directly at each exit point - never through a captured function-call
+assignment. Nothing is ever collected from an assignment, so there is no
+mechanism left that could pollute the exit code with unrelated output.
+
+This is a good example of a fix introducing a new, non-obvious bug of its
+own - worth remembering before reaching for a "wrap it in a function"
+pattern again in a script whose job includes visibly streaming a nested
+process's output.
+
 ## Not yet tested
 
 - `setup.bat` run standalone, skipping `start_installation.py` (already

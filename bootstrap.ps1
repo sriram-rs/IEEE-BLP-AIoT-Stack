@@ -3,29 +3,36 @@
 #
 #   iwr <raw-url-of-this-file> -UseBasicParsing | iex
 #
-# The piped form above can't pass extra flags through (a limitation of
-# "iwr | iex", not of this script). To pass flags (e.g. --with-pptx),
-# download this file first, then run it directly:
+# To pass extra flags through (e.g. --with-pptx), download this file first,
+# then run it directly:
 #
 #   .\bootstrap.ps1 --with-pptx
 #
-# IMPORTANT: everything below runs inside a function and uses "return",
-# never "exit". When this file's content is piped into "iex"
-# (Invoke-Expression), it runs inline in the CURRENT PowerShell session,
-# not as a separate process - so a bare "exit" would close the student's
-# entire PowerShell window instantly, wiping out every message (including
-# "Setup complete!") before they can read it. "return" only leaves this
-# function, leaving the window open either way.
+# IMPORTANT: this never calls "exit". When this file's content is piped
+# into "iex" (Invoke-Expression) - the whole point of the one-liner - it
+# runs inline in the CURRENT PowerShell session, not as a separate process,
+# so a bare "exit" would close the student's entire PowerShell window
+# instantly, wiping out every message before they can read it.
+#
+# It also deliberately does NOT wrap the logic in a function whose result
+# gets assigned to a variable (e.g. "$code = MyFunction"). Doing that once
+# caused a real bug here: capturing a function's return value captures
+# EVERYTHING it emits, including every line of console output from the
+# nested setup process invoked below - so the "exit code" variable ended
+# up as a giant array of all that text with the real number tacked on the
+# end, and a single-element array like @(0) evaluates as falsy in an "if",
+# making a successful run look like a failure. Using a plain top-level
+# "do { ... } while ($false)" block with "break" for early exits avoids
+# this entirely, since nothing is ever captured from an assignment.
 #
 # NOTE: $RepoZipUrl below points at a branch. Update it to point at `main`
 # once feature/onboarding-scripts merges.
 
-function Invoke-AiotBootstrap {
-    param([string[]]$ForwardArgs = @())
+$RepoZipUrl = "https://github.com/sriram-rs/IEEE-BLP-AIoT-Stack/archive/refs/heads/feature/onboarding-scripts.zip"
+$DestDir = Join-Path (Get-Location) "IEEE-BLP-AIoT-Stack"
+$ExitCode = 1
 
-    $RepoZipUrl = "https://github.com/sriram-rs/IEEE-BLP-AIoT-Stack/archive/refs/heads/feature/onboarding-scripts.zip"
-    $DestDir = Join-Path (Get-Location) "IEEE-BLP-AIoT-Stack"
-
+:main do {
     Write-Host "== Downloading the AIoT Gateway course code =="
 
     # The real, careful Python-version check happens later in setup.bat,
@@ -46,7 +53,8 @@ function Invoke-AiotBootstrap {
         Write-Host ""
         Write-Host "If this is a school/managed laptop and you cannot install software,"
         Write-Host "ask your instructor for help."
-        return 1
+        $ExitCode = 1
+        break main
     }
 
     $TmpZip = Join-Path $env:TEMP ("aiot-stack-" + [guid]::NewGuid().ToString() + ".zip")
@@ -54,7 +62,8 @@ function Invoke-AiotBootstrap {
         Invoke-WebRequest -Uri $RepoZipUrl -OutFile $TmpZip -UseBasicParsing
     } catch {
         Write-Host "Could not download the code. Check your internet connection and try again."
-        return 2
+        $ExitCode = 2
+        break main
     }
 
     $ExtractDir = Join-Path $env:TEMP ("aiot-stack-extract-" + [guid]::NewGuid().ToString())
@@ -63,7 +72,8 @@ function Invoke-AiotBootstrap {
     } catch {
         Write-Host "Downloaded the code but could not extract it. Ask your instructor for help."
         Remove-Item $TmpZip -Force -ErrorAction SilentlyContinue
-        return 3
+        $ExitCode = 3
+        break main
     }
     Remove-Item $TmpZip -Force -ErrorAction SilentlyContinue
 
@@ -71,7 +81,8 @@ function Invoke-AiotBootstrap {
     if (-not $SrcDir) {
         Write-Host "Downloaded the code but couldn't find it after extracting."
         Write-Host "Ask your instructor for help."
-        return 4
+        $ExitCode = 4
+        break main
     }
 
     if (Test-Path $DestDir) {
@@ -84,21 +95,19 @@ function Invoke-AiotBootstrap {
     Write-Host "Code is in: $DestDir"
     Set-Location $DestDir
     Write-Host "Running setup..."
-    & $PyExe @PyArgs "start_installation.py" @ForwardArgs
-    return $LASTEXITCODE
-}
-
-$AiotExitCode = Invoke-AiotBootstrap -ForwardArgs $args
+    & $PyExe @PyArgs "start_installation.py" @args
+    $ExitCode = $LASTEXITCODE
+} while ($false)
 
 Write-Host ""
-if ($AiotExitCode -eq 0) {
+if ($ExitCode -eq 0) {
     Write-Host "== Setup finished successfully. ==" -ForegroundColor Green
     Write-Host "Before you start using the gateway, take a look at PREREQUISITES.md"
     Write-Host "in the IEEE-BLP-AIoT-Stack folder - it covers a couple of one-time,"
     Write-Host "one-per-machine things this script can't do for you (like turning"
     Write-Host "Bluetooth on)."
 } else {
-    Write-Host "== Setup did NOT finish successfully (exit code $AiotExitCode). ==" -ForegroundColor Red
+    Write-Host "== Setup did NOT finish successfully (exit code $ExitCode). ==" -ForegroundColor Red
     Write-Host "Scroll up to read the error message. Copy it and ask your instructor for help."
 }
 Write-Host ""

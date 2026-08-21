@@ -107,16 +107,28 @@ end up in the same place:
   block even when they're just plain text or inside quotes. This bit us
   twice during real Windows testing; the full story is in the verification
   doc.
-- **Why `bootstrap.ps1` wraps everything in a function and uses `return`
-  instead of `exit`:** when its content is piped into `iex`
-  (`Invoke-Expression`) - the whole point of the one-liner - it runs
-  inline in the *current* PowerShell session, not as a separate process.
-  A bare `exit` in that context closes the entire PowerShell window
-  instantly, which is exactly what happened during real testing: the
-  window closed before the student could see whether setup had actually
-  succeeded. `setup.sh`/`setup.bat` don't have this problem, since
-  `start_installation.py` always launches them as genuine child
+- **Why `bootstrap.ps1` never calls `exit`:** when its content is piped
+  into `iex` (`Invoke-Expression`) - the whole point of the one-liner - it
+  runs inline in the *current* PowerShell session, not as a separate
+  process. A bare `exit` in that context closes the entire PowerShell
+  window instantly, which is exactly what happened during real testing:
+  the window closed before the student could see whether setup had
+  actually succeeded. `setup.sh`/`setup.bat` don't have this problem,
+  since `start_installation.py` always launches them as genuine child
   processes, never via an inline-eval mechanism like `iex`.
+- **Why `bootstrap.ps1` doesn't wrap its logic in a function either:** the
+  first fix for the `exit` problem above did exactly that (a function
+  using `return`, called as `$code = MyFunction`) - and it introduced a
+  *second* real bug: capturing a function's return value in PowerShell
+  captures everything it emits, not just the explicit `return`, including
+  every line of console output from the nested setup process invoked
+  inside it. The "exit code" variable ended up as a giant array of that
+  text with the real number tacked on the end, and PowerShell evaluates a
+  single-element array like `@(0)` as falsy in an `if` - so a genuinely
+  successful run printed "did NOT finish successfully." The fix was to
+  drop the function entirely and use a plain top-level `:main do { ... }
+  while ($false)` block with `break main` for early exits - nothing is
+  ever captured from an assignment, so this failure mode can't recur.
 
 ## If something breaks
 
